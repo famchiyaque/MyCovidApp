@@ -12,13 +12,12 @@ class GetCovidByDateUseCase
         private val repository: CovidRepository
     ){
     operator fun invoke(
-        appointmentName: String,
         date: String,
     ): Flow<Result<List<String>>> =
         flow {
             try {
                 emit(Result.Loading)
-                val data = repository.getDateAvailability(appointmentName, date)
+                val data = repository.getCovidByDate(date)
                 emit(Result.Success(data))
             } catch (e: Exception) {
                 emit(Result.Error(e))
