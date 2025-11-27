@@ -7,5 +7,5 @@ data class CountryCaseEntry(
 
 data class CovidByCountry(
     val country: String,
-    val cases: ListOf<CountryCaseEntry>
+    val cases: List<CountryCaseEntry>
 )

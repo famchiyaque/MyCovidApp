@@ -7,5 +7,5 @@ data class CovidDateEntry (
         )
 
 data class CovidByDate(
-  val data: ListOf<CovidDateEntry>
+  val data: List<CovidDateEntry>
 )
