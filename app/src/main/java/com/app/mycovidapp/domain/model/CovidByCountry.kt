@@ -1,5 +1,11 @@
 package com.app.mycovidapp.domain.model
 
-data class CovidByCountry {
+data class CountryCaseEntry(
+    val date: String,
+    val entry: Case
+)
 
-}
+data class CovidByCountry(
+    val country: String,
+    val cases: ListOf<CountryCaseEntry>
+)
