@@ -1,21 +1,15 @@
 package com.app.mycovidapp.di
 
 import android.content.Context
-import com.app.mycovidapp.data.remote.api.AppointmentApi
 import com.app.mycovidapp.data.remote.api.CovidApi
 import com.app.mycovidapp.data.repository.CovidRepositoryImpl
 import com.app.mycovidapp.domain.repository.CovidRepository
-import com.app.nefrovida.data.remote.api.AuthApiService
-import com.app.nefrovida.data.remote.api.RefreshAuthenticator
-import com.app.nefrovida.data.remote.api.ReportsApi
-import com.app.nefrovida.data.repository.AppointmentRepositoryImpl
-import com.app.nefrovida.domain.repository.AppointmentRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import jakarta.inject.Singleton
+import javax.inject.Singleton
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
