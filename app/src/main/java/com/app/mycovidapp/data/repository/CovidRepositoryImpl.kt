@@ -15,12 +15,17 @@ class CovidRepositoryImpl
         private val api: CovidApi
     ) : CovidRepository{
     override suspend fun getCovidByDate(date: String): CovidByDate {
-        val response = api.getCovidByDate()
-        return response.map { it.toDomain() }
+        val response = api.getCovidByDate(date)
+        val entries = response.map { it.toDomain() }
+        return CovidByDate(data = entries)
     }
 
     override suspend fun getCovidByCountry(country: String): CovidByCountry {
-        val response = api.getCovidByCountry()
-        return response.map { it.toDomain() }
+        val response = api.getCovidByCountry(country)
+        return if (response.isNotEmpty()) {
+            response.first().toDomain()
+        } else {
+            CovidByCountry(country = country, cases = emptyList())
+        }
     }
 }

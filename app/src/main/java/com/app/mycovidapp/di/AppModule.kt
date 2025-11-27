@@ -2,6 +2,9 @@ package com.app.mycovidapp.di
 
 import android.content.Context
 import com.app.mycovidapp.data.remote.api.AppointmentApi
+import com.app.mycovidapp.data.remote.api.CovidApi
+import com.app.mycovidapp.data.repository.CovidRepositoryImpl
+import com.app.mycovidapp.domain.repository.CovidRepository
 import com.app.nefrovida.data.remote.api.AuthApiService
 import com.app.nefrovida.data.remote.api.RefreshAuthenticator
 import com.app.nefrovida.data.remote.api.ReportsApi
@@ -13,6 +16,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -22,9 +26,8 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "\"https://api.api-ninjas.com/v1"
-//    curl -X GET "https://api.api-ninjas.com/v1/covid19?country=United%20States" \
-    -H "X-Api-Key: sDBYS8y8Ty+CICVabrzlYQ==h3Tgkj81YvTbfhNr"
+    private const val BASE_URL = "https://api.api-ninjas.com/v1/"
+    private const val API_KEY = "sDBYS8y8Ty+CICVabrzlYQ==h3Tgkj81YvTbfhNr"
 
     // For physical device, use your computer's IP: "http://192.168.x.x:3001/api/"
     private var retrofit: Retrofit? = null
@@ -42,25 +45,21 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAppointmentApi(retrofit: Retrofit): AppointmentApi = retrofit.create(AppointmentApi::class.java)
+    fun provideCovidApi(retrofit: Retrofit): CovidApi = retrofit.create(CovidApi::class.java)
 
     @Provides
     @Singleton
-    fun provideReportsApi(retrofit: Retrofit): ReportsApi = retrofit.create(ReportsApi::class.java)
-
-    @Provides
-    @Singleton
-    fun provideAppointmentRepository(api: AppointmentApi): AppointmentRepository = AppointmentRepositoryImpl(api)
+    fun provideCovidRepository(api: CovidApi): CovidRepository = CovidRepositoryImpl(api)
 
     private fun createRetrofit(context: Context): Retrofit {
-        // Create refresh client without authenticator to avoid infinite loops
-        val refreshClient =
-            OkHttpClient
-                .Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
+        // Create API key interceptor
+        val apiKeyInterceptor = Interceptor { chain ->
+            val originalRequest = chain.request()
+            val newRequest = originalRequest.newBuilder()
+                .addHeader("X-Api-Key", API_KEY)
                 .build()
+            chain.proceed(newRequest)
+        }
 
         // Create logging interceptor for debugging
         val loggingInterceptor =
@@ -68,10 +67,11 @@ object NetworkModule {
                 level = HttpLoggingInterceptor.Level.BODY
             }
 
-        // Create main OkHttp client with cookie jar and authenticator
+        // Create main OkHttp client with API key interceptor
         val okHttpClient =
             OkHttpClient
                 .Builder()
+                .addInterceptor(apiKeyInterceptor) // Add API key to all requests
                 .addInterceptor(loggingInterceptor)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -86,5 +86,4 @@ object NetworkModule {
             .build()
     }
 
-    fun provideAuthApiService(context: Context): AuthApiService = provideRetrofit(context).create(AuthApiService::class.java)
 }
