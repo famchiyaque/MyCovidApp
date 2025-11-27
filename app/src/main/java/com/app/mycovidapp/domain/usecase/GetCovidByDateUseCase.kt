@@ -1,6 +1,7 @@
 package com.app.mycovidapp.domain.usecase
 
 import com.app.mycovidapp.domain.common.Result
+import com.app.mycovidapp.domain.model.CovidByDate
 import com.app.mycovidapp.domain.repository.CovidRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -13,7 +14,7 @@ class GetCovidByDateUseCase
     ){
     operator fun invoke(
         date: String,
-    ): Flow<Result<List<String>>> =
+    ): Flow<Result<CovidByDate>> =
         flow {
             try {
                 emit(Result.Loading)
