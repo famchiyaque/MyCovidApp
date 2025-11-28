@@ -30,6 +30,56 @@ class CountryViewModel
         loadCountryData(countryName)
     }
 
+    fun onYearSelected(year: String) {
+        _uiState.update { 
+            val firstCase = it.cases.firstOrNull()
+            val defaultMonth = if (year == firstCase?.date?.split("-")?.get(0)) {
+                firstCase.date.split("-")[1]
+            } else {
+                it.cases
+                    .filter { case -> case.date.startsWith("$year-") }
+                    .firstOrNull()
+                    ?.date
+                    ?.split("-")
+                    ?.get(1) ?: ""
+            }
+            val defaultDay = if (defaultMonth.isNotBlank()) {
+                it.cases
+                    .filter { case -> case.date.startsWith("$year-$defaultMonth-") }
+                    .firstOrNull()
+                    ?.date
+                    ?.split("-")
+                    ?.get(2) ?: ""
+            } else ""
+            
+            it.copy(
+                selectedFilterYear = year,
+                selectedFilterMonth = defaultMonth,
+                selectedFilterDay = defaultDay
+            )
+        }
+    }
+
+    fun onMonthSelected(month: String) {
+        _uiState.update {
+            val defaultDay = it.cases
+                .filter { case -> case.date.startsWith("${it.selectedFilterYear}-$month-") }
+                .firstOrNull()
+                ?.date
+                ?.split("-")
+                ?.get(2) ?: ""
+            
+            it.copy(
+                selectedFilterMonth = month,
+                selectedFilterDay = defaultDay
+            )
+        }
+    }
+
+    fun onDaySelected(day: String) {
+        _uiState.update { it.copy(selectedFilterDay = day) }
+    }
+
     private fun loadCountryData(countryName: String) {
         viewModelScope.launch {
             getCovidByCountryUseCase(countryName).collect { result ->
@@ -38,11 +88,20 @@ class CountryViewModel
                         _uiState.update { it.copy(isLoading = true, error = null) }
                     }
                     is Result.Success -> {
+                        val cases = result.data.cases.sortedBy { it.date }
+                        val firstCase = cases.firstOrNull()
+                        val firstYear = firstCase?.date?.split("-")?.get(0) ?: ""
+                        val firstMonth = firstCase?.date?.split("-")?.get(1) ?: ""
+                        val firstDay = firstCase?.date?.split("-")?.get(2) ?: ""
+                        
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                cases = result.data.cases,
-                                error = null
+                                cases = cases,
+                                error = null,
+                                selectedFilterYear = firstYear,
+                                selectedFilterMonth = firstMonth,
+                                selectedFilterDay = firstDay
                             )
                         }
                     }

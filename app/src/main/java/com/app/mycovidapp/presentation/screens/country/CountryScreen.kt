@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -33,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.app.mycovidapp.domain.model.CountryCaseEntry
+import com.app.mycovidapp.presentation.components.CountryDetail
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -102,47 +100,56 @@ fun CountryScreen(
                     )
                 }
                 else -> {
-
-                    Box(
-                        modifier = Modifier,
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "${NumberFormat.getNumberInstance(Locale.US).format(uiState.totalCases)}",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Text (
-                            text = "Total Cases",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Text (
-                            text = "From ${uiState.firstDate} to ${uiState.lastDate}",
-                            style = MaterialTheme.typography.titleSmall,
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-
-
-
-                    LazyColumn(
+                    Column(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        item {
-                            Text(
-                                text = "Historical COVID-19 Data",
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(16.dp)
-                            )
+                        // Aggregate Total Cases Box
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(20.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = NumberFormat.getNumberInstance(Locale.US).format(uiState.totalCases),
+                                    style = MaterialTheme.typography.displayMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = "Total Cases",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier.padding(top = 8.dp)
+                                )
+                                Text(
+                                    text = "From ${uiState.firstDate} to ${uiState.lastDate}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                            }
                         }
 
-                        items(uiState.cases.reversed()) { caseEntry ->
-                            CaseCard(caseEntry = caseEntry)
-                        }
+                        // Country Detail with Filters
+                        CountryDetail(
+                            caseEntry = uiState.selectedCaseEntry,
+                            yearOptions = uiState.filterYearOptions,
+                            monthOptions = uiState.filterMonthOptions,
+                            dayOptions = uiState.filterDayOptions,
+                            selectedYear = uiState.selectedFilterYear,
+                            selectedMonth = uiState.selectedFilterMonth,
+                            selectedDay = uiState.selectedFilterDay,
+                            onYearSelected = { viewModel.onYearSelected(it) },
+                            onMonthSelected = { viewModel.onMonthSelected(it) },
+                            onDaySelected = { viewModel.onDaySelected(it) }
+                        )
                     }
                 }
             }
@@ -150,63 +157,3 @@ fun CountryScreen(
     }
 }
 
-@Suppress("ktlint:standard:function-naming")
-@Composable
-fun CaseCard(
-    caseEntry: CountryCaseEntry,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = caseEntry.date,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column {
-                    Text(
-                        text = "Total Cases",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = NumberFormat.getNumberInstance(Locale.US).format(caseEntry.entry.total),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(
-                        text = "New Cases",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "+${NumberFormat.getNumberInstance(Locale.US).format(caseEntry.entry.new)}",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = if (caseEntry.entry.new > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-        }
-    }
-}
