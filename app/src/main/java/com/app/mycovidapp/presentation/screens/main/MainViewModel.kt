@@ -39,6 +39,10 @@ class MainViewModel
         _uiState.update { it.copy(showDatePicker = show) }
     }
 
+    fun onListIndexChanged(index: Int) {
+        _uiState.update { it.copy(listIndex = index) }
+    }
+
     fun loadCovidData() {
         viewModelScope.launch {
             getCovidByDateUseCase(uiState.value.selectedDate).collect { result ->
