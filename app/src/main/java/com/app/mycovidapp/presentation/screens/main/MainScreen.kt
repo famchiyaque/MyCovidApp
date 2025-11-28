@@ -44,28 +44,36 @@ fun MainScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 16.dp)
     ) {
-        // Header with date
+        // Header
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            Text(
+                text = "COVID-19 Statistics",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        // Search bar and Date Picker in same row
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Text(
-                    text = "COVID-19 Statistics",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Date: ${uiState.selectedDate}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            SearchBar(
+                query = uiState.searchQuery,
+                onQueryChange = { viewModel.onSearchQueryChanged(it) },
+                modifier = Modifier.weight(1f)
+            )
 
             IconButton(onClick = { viewModel.onDatePickerVisibilityChanged(true) }) {
                 Icon(
@@ -75,13 +83,18 @@ fun MainScreen(
             }
         }
 
-        // Search Bar
-        SearchBar(
-            query = uiState.searchQuery,
-            onQueryChange = { viewModel.onSearchQueryChanged(it) }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            Text(
+                text = "Showing results for date: ${uiState.selectedDate}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
 
         // Content
         Box(modifier = Modifier.fillMaxSize()) {
