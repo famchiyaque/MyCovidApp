@@ -2,9 +2,9 @@
 agp = "8.8.0"
 coilCompose = "2.3.0"
 converterGson = "2.11.0"
-kotlin = "2.0.0"
+kotlin = "2.2.21"
 coreKtx = "1.15.0"
-hilt = "2.52"
+hilt = "2.57.2"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -17,7 +17,6 @@ hilt-navigation = "1.2.0"
 retrofit = "2.11.0"
 okhttp = "4.12.0"
 gson = "2.10.1"
-persistentCookieJar = "v1.0.1"
 room = "2.6.1"
 runtime = "1.7.6"
 
@@ -59,7 +58,6 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-persistent-cookie-jar = { group = "com.github.franmontiel", name = "PersistentCookieJar", version.ref = "persistentCookieJar" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
