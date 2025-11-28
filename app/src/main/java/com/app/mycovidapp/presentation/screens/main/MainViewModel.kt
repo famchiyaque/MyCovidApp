@@ -32,7 +32,10 @@ class MainViewModel
     }
 
     fun onSearchQueryChanged(query: String) {
-        _uiState.update { it.copy(searchQuery = query) }
+        _uiState.update { 
+            // Reset pagination to page 0 when search query changes
+            it.copy(searchQuery = query, listIndex = 0)
+        }
     }
 
     fun onDatePickerVisibilityChanged(show: Boolean) {
