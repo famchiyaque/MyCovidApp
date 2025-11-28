@@ -84,4 +84,7 @@ dependencies {
 
     // Calendar library
     implementation("com.kizitonwose.calendar:compose:2.9.0")
+
+    // DataStore Preferences
+    implementation(libs.androidx.datastore.preferences)
 }

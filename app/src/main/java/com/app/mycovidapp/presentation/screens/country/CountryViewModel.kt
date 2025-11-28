@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +27,13 @@ class CountryViewModel
     val uiState: StateFlow<CountryUIState> = _uiState.asStateFlow()
 
     init {
-        val countryName = savedStateHandle.get<String>("countryName") ?: ""
+        val encodedCountryName = savedStateHandle.get<String>("countryName") ?: ""
+        // Decode the country name in case it was URL encoded (handles both "+" and "%20" formats)
+        val countryName = try {
+            URLDecoder.decode(encodedCountryName, StandardCharsets.UTF_8.toString())
+        } catch (e: Exception) {
+            encodedCountryName // Fallback to original if decoding fails
+        }
         _uiState.update { it.copy(countryName = countryName) }
         loadCountryData(countryName)
     }

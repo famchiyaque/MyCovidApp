@@ -2,12 +2,14 @@ package com.app.mycovidapp.presentation.screens.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.mycovidapp.data.local.PreferencesManager
 import com.app.mycovidapp.domain.common.Result
 import com.app.mycovidapp.domain.usecase.GetCovidByDateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,14 +18,28 @@ import javax.inject.Inject
 class MainViewModel
     @Inject
     constructor(
-        private val getCovidByDateUseCase: GetCovidByDateUseCase
+        private val getCovidByDateUseCase: GetCovidByDateUseCase,
+        private val preferencesManager: PreferencesManager
     ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUIState())
     val uiState: StateFlow<MainUIState> = _uiState.asStateFlow()
 
     init {
+        loadSavedSearchQuery()
         loadCovidData()
+    }
+
+    private fun loadSavedSearchQuery() {
+        viewModelScope.launch {
+            preferencesManager.lastSearchQuery
+                .take(1) // Only take the first value (current saved query)
+                .collect { savedQuery ->
+                    if (savedQuery.isNotEmpty()) {
+                        _uiState.update { it.copy(searchQuery = savedQuery) }
+                    }
+                }
+        }
     }
 
     fun onDateSelected(date: String) {
@@ -35,6 +51,10 @@ class MainViewModel
         _uiState.update { 
             // Reset pagination to page 0 when search query changes
             it.copy(searchQuery = query, listIndex = 0)
+        }
+        // Save search query to preferences
+        viewModelScope.launch {
+            preferencesManager.saveLastSearchQuery(query)
         }
     }
 

@@ -36,8 +36,6 @@ import androidx.navigation.NavHostController
 import com.app.mycovidapp.presentation.components.CountrySnapshotCard
 import com.app.mycovidapp.presentation.components.CovidDatePickerDialog
 import com.app.mycovidapp.presentation.components.SearchBar
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -169,11 +167,8 @@ fun MainScreen(
                             CountrySnapshotCard(
                                 entry = entry,
                                 onClick = {
-                                    val encodedCountryName = URLEncoder.encode(
-                                        entry.country,
-                                        StandardCharsets.UTF_8.toString()
-                                    )
-                                    navController.navigate("country/$encodedCountryName")
+                                    // Navigation Compose handles URL encoding automatically for StringType arguments
+                                    navController.navigate("country/${entry.country}")
                                 }
                             )
                         }
