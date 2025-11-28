@@ -102,6 +102,32 @@ fun CountryScreen(
                     )
                 }
                 else -> {
+
+                    Box(
+                        modifier = Modifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "${NumberFormat.getNumberInstance(Locale.US).format(uiState.totalCases)}",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text (
+                            text = "Total Cases",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text (
+                            text = "From ${uiState.firstDate} to ${uiState.lastDate}",
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+
+
+
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {

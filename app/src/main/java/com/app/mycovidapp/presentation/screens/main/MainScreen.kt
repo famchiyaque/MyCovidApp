@@ -117,10 +117,11 @@ fun MainScreen(
             }
         }
 
-        // Content
-        Box(modifier = Modifier.fillMaxSize()
-            .padding(bottom=24.dp)
-            .height(250.dp)
+        // Content - takes remaining space but leaves room for pagination
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
         ) {
             when {
                 uiState.isLoading -> {
@@ -173,53 +174,51 @@ fun MainScreen(
             }
         }
 
-        Column(
+        // Pagination row - fixed at bottom
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row (
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text (
-                    text = "<",
-                    modifier = Modifier
-                        .clickable {
-                            if (uiState.listIndex > 0) {
-                                viewModel.onListIndexChanged(uiState.listIndex - 1)
-                            }
+            Text(
+                text = "<",
+                modifier = Modifier
+                    .clickable {
+                        if (uiState.listIndex > 0) {
+                            viewModel.onListIndexChanged(uiState.listIndex - 1)
                         }
-                        .padding(end = 8.dp),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                OutlinedTextField(
-                    value = uiState.listIndex.toString(),
-                    onValueChange = { newValue ->
-                        val index = newValue.toIntOrNull() ?: 0
-                        viewModel.onListIndexChanged(index)
-                    },
-                    label = { Text("Page") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.width(80.dp).height(60.dp)
-                )
-                Text (
-                    text = ">",
-                    modifier = Modifier
-                        .clickable {
-                            val baseSize = uiState.baseFilteredCountries.size
-                            val maxPages = if (baseSize == 0) 0 else ((baseSize - 1) / uiState.pageSize) + 1
-                            if (uiState.listIndex < maxPages - 1) {
-                                viewModel.onListIndexChanged(uiState.listIndex + 1)
-                            }
+                    }
+                    .padding(end = 8.dp),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            OutlinedTextField(
+                value = uiState.listIndex.toString(),
+                onValueChange = { newValue ->
+                    val index = newValue.toIntOrNull() ?: 0
+                    viewModel.onListIndexChanged(index)
+                },
+                label = { Text("Page") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.width(80.dp).height(60.dp)
+            )
+            Text(
+                text = ">",
+                modifier = Modifier
+                    .clickable {
+                        val baseSize = uiState.baseFilteredCountries.size
+                        val maxPages = if (baseSize == 0) 0 else ((baseSize - 1) / uiState.pageSize) + 1
+                        if (uiState.listIndex < maxPages - 1) {
+                            viewModel.onListIndexChanged(uiState.listIndex + 1)
                         }
-                        .padding(start = 8.dp),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                    }
+                    .padding(start = 8.dp),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 
