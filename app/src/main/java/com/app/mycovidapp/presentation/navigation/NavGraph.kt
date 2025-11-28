@@ -17,7 +17,9 @@ sealed class Screen(
 ) {
     object Main : Screen("main")
 
-    object Country : Screen("country")
+    object Country : Screen("country/{countryName}") {
+        fun createRoute(countryName: String) = "country/$countryName"
+    }
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -38,17 +40,10 @@ fun NavGraph(
         composable(
             route = Screen.Country.route,
             arguments = listOf(
-                navArgument("countryName"){type = NavType.Stringtype}
+                navArgument("countryName") { type = NavType.StringType }
             )
         ) {
-                backStackEntry ->
-            val id = backStackEntry.arguments?.getInt("patientAnalysisId") ?: 0
-
-            ReportDetailScreen(
-                navController = navController,
-                onBackClick = { navController.popBackStack() },
-                patientAnalysisId = id
-            )
+            CountryScreen(navController = navController)
         }
     }
 }
