@@ -97,12 +97,20 @@ fun MainScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Showing results for date: ${uiState.selectedDate}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
+                Column {
+                    Text(
+                        text = "Showing results for date: ${uiState.selectedDate}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                    Text(
+                        text = uiState.currentPageDisplayText,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 2.dp)
+                    )
+                }
 
 //                OutlinedTextField(
 //                    value = uiState.listIndex.toString(),
@@ -225,6 +233,7 @@ fun MainScreen(
     // Date Picker Dialog
     if (uiState.showDatePicker) {
         CovidDatePickerDialog(
+            initialDate = uiState.selectedDate,
             onDateSelected = { viewModel.onDateSelected(it) },
             onDismiss = { viewModel.onDatePickerVisibilityChanged(false) }
         )

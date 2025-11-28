@@ -41,4 +41,19 @@ data class MainUIState(
             if (start >= base.size) return emptyList()
             return base.subList(start, minOf(end, base.size))
         }
+
+    val currentPageStartIndex: Int
+        get() = (listIndex * pageSize) + 1
+
+    val currentPageEndIndex: Int
+        get() = minOf((listIndex + 1) * pageSize, baseFilteredCountries.size)
+
+    val totalFilteredCount: Int
+        get() = baseFilteredCountries.size
+
+    val currentPageDisplayText: String
+        get() {
+            if (totalFilteredCount == 0) return "Showing 0 results"
+            return "Showing ${currentPageStartIndex}-${currentPageEndIndex} of $totalFilteredCount results"
+        }
 }

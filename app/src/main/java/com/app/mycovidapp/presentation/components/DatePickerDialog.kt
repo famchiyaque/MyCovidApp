@@ -15,10 +15,22 @@ import java.util.Locale
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun CovidDatePickerDialog(
+    initialDate: String? = null,
     onDateSelected: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val datePickerState = rememberDatePickerState()
+    val initialDateMillis = initialDate?.let {
+        try {
+            val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            formatter.parse(it)?.time
+        } catch (e: Exception) {
+            null
+        }
+    }
+    
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialDateMillis
+    )
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
