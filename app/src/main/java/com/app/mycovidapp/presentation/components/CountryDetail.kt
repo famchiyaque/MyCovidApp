@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -53,7 +54,7 @@ fun CountryDetail(
                 selected = selectedYear,
                 onSelectionChange = onYearSelected,
                 label = "Year",
-                modifier = Modifier.weight(3f)
+                modifier = Modifier.weight(1.3f)
             )
 
             FilterDropdown(
@@ -78,7 +79,12 @@ fun CountryDetail(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    colors = CardDefaults.cardColors(
+            containerColor = Color.Transparent
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 0.dp
+        )
             ) {
                 Column(
                     modifier = Modifier
@@ -92,12 +98,12 @@ fun CountryDetail(
                         color = MaterialTheme.colorScheme.primary
                     )
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
+//                    Row(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(top = 12.dp),
+//                        horizontalArrangement = Arrangement.SpaceBetween
+//                    ) {
                         Column {
                             Text(
                                 text = "Total Cases",
@@ -111,7 +117,7 @@ fun CountryDetail(
                             )
                         }
 
-                        Column(horizontalAlignment = Alignment.End) {
+                        Column(horizontalAlignment = Alignment.Start) {
                             Text(
                                 text = "New Cases",
                                 style = MaterialTheme.typography.bodySmall,
@@ -124,7 +130,7 @@ fun CountryDetail(
                                 color = if (caseEntry.entry.new > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                             )
                         }
-                    }
+//                    }
                 }
             }
         }
